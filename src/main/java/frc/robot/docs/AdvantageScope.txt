@@ -1,0 +1,34 @@
+### How to set up the **Swerve Drive** widget in Advantage Scope
+
+1. **Launch Advantage Scope** and open (or add) a **“Swerve Drive”** widget.
+
+2. Bind the widget’s data fields to your log paths:
+
+   | Widget Field             | Log Path you created       |
+   | ------------------------ | -------------------------- |
+   | **Pose** (`Pose2d`)      | `/Swerve/Pose`             |
+   | **Actual Angles (°)**    | `/Swerve/ActualAnglesDeg`  |
+   | **Actual Speeds (m/s)**  | `/Swerve/ActualSpeedsMps`  |
+   | **Desired Angles (°)**   | `/Swerve/DesiredAnglesDeg` |
+   | **Desired Speeds (m/s)** | `/Swerve/DesiredSpeedsMps` |
+
+3. (Optional) **Save the layout**: `File ▸ Save Layout` → store the resulting `.aslay` file in `src/main/deploy` so it auto‑loads next time the robot connects.
+
+---
+
+### Quick tuning workflow (use this any time you re‑tune modules)
+
+1. Put the robot on blocks, **zero** the gyro and wheel encoders.
+2. Enable (tele‑op) and **command slow forward motion**:
+
+   * • Desired arrow should point straight ahead.
+   * • If the actual arrow overshoots, oscillates, or flips 180°, raise **angle kP** (steer PID).\*
+3. Increase speed gradually and watch the **length** of the arrows:
+
+   * • Actual arrow shorter than desired ⇒ raise **drive kP/kF**.
+4. When the robot is disabled and wheels are straight, the actual arrows should overlay the desired ones:
+
+   * • If not, tweak each **CANcoder offset** until they align perfectly.
+5. Re‑enable and repeat until actual vectors consistently trace the desired ones with minimal lag.
+
+Keep these two sections in your docs or README so anyone on the team can set up Advantage Scope and tune the pods in a few minutes next season.
