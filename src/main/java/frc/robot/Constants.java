@@ -13,10 +13,10 @@ public final class Constants {
 
         // Gyro
         public static final int GYRO_ID = 9;
-        public static final String GYRO_CAN_BUS_NAME = "Gary";
+        public static final String GYRO_CAN_BUS_NAME = "rio";
 
         public static final double MAXIMUM_CHASSIS_VELOCITY = 4.0; // m/s
-        public static final double MAXIMUM_CHASSIS_ANGULAR_VELOCITY = 10.0; // rad/s
+        public static final double MAXIMUM_CHASSIS_ANGULAR_VELOCITY = 0.6; // rotations/s
     }
 
     public static final class Controls {
@@ -78,43 +78,43 @@ public final class Constants {
 
     public static final class SwerveModules {
         public static final SwerveModuleConstants FRONT_LEFT = new SwerveModuleConstants(
-            11,
             12,
+            11,
             13,
-            "Gary",
+            "rio",
             true,
             true,
-            Rotation2d.fromDegrees(204.79), // degrees
+            Rotation2d.fromDegrees(188.877), // degrees
             new Translation2d(Drivetrain.WHEEL_BASE / 2.0, Drivetrain.TRACK_WIDTH / 2.0)
         );
 
         public static final SwerveModuleConstants FRONT_RIGHT = new SwerveModuleConstants(
-            21, 
             22, 
+            21, 
             23, 
-            "Gary",
+            "rio",
             true, true,
-            Rotation2d.fromDegrees(191.34),
+            Rotation2d.fromDegrees(162.7),
             new Translation2d(Drivetrain.WHEEL_BASE / 2.0, -Drivetrain.TRACK_WIDTH / 2.0)
         );
 
         public static final SwerveModuleConstants BACK_LEFT = new SwerveModuleConstants(
-            31, 
             32, 
+            31, 
             33,
-            "Gary",
+            "rio",
             true, true,
-            Rotation2d.fromDegrees(50.19),
+            Rotation2d.fromDegrees(142.7),
             new Translation2d(-Drivetrain.WHEEL_BASE / 2.0, Drivetrain.TRACK_WIDTH / 2.0)
         );
 
         public static final SwerveModuleConstants BACK_RIGHT = new SwerveModuleConstants(
-            37, 
             38, 
+            37, 
             39,
-            "Gary",
+            "rio",
             true, true,
-            Rotation2d.fromDegrees(352.71),
+            Rotation2d.fromDegrees(224.2),
             new Translation2d(-Drivetrain.WHEEL_BASE / 2.0, -Drivetrain.TRACK_WIDTH / 2.0)
         );
     }

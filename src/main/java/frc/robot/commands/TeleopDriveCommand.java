@@ -20,7 +20,8 @@ public class TeleopDriveCommand extends Command {
     private final double maxSwerveVelocity = Constants.Drivetrain.MAXIMUM_CHASSIS_VELOCITY;
     private final double maxSwerveAngularVelocity = Constants.Drivetrain.MAXIMUM_CHASSIS_ANGULAR_VELOCITY;
 
-    private double speedModifier = 0.7;
+    private double speedModifier = 0.1;
+    private double rotationModifier = 1.0;
 
     public TeleopDriveCommand(
         SwerveDrive swerve, 
@@ -48,7 +49,7 @@ public class TeleopDriveCommand extends Command {
         swerve.drive(
             xVelocity * maxSwerveVelocity * speedModifier,
             yVelocity * maxSwerveVelocity * speedModifier,
-            angVelocity
+            angVelocity * maxSwerveAngularVelocity * rotationModifier
         );
     }
 
