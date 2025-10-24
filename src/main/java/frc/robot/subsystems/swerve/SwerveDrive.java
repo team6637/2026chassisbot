@@ -8,6 +8,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 import frc.robot.Constants;
@@ -139,6 +140,10 @@ public class SwerveDrive extends SubsystemBase {
 
         // Update odometry
         odometry.update(getHeading(), getModulePositions());
+
+        SmartDashboard.putNumber("odometry X", odometry.getPoseMeters().getX()); 
+        SmartDashboard.putNumber("odometry Y", odometry.getPoseMeters().getY()); 
+
     }
 
     public void log() {

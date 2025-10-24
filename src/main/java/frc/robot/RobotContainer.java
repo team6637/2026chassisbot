@@ -11,11 +11,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.TeleopDriveCommand;
 import frc.robot.subsystems.swerve.SwerveDrive;
+import frc.robot.subsystems.swerve.VisionSubsystem;
 
 public class RobotContainer {
 
     // Subsystems
-    //private final SwerveDrive swerveDrive = new SwerveDrive();
+    private final SwerveDrive swerveDrive = new SwerveDrive();
+    //private final VisionSubsystem vision = new VisionSubsystem(0);
 
     // Driver Joystick
     private final Joystick driverJoystick = new Joystick(0);
@@ -24,15 +26,15 @@ public class RobotContainer {
         configureBindings();
 
         // Default driving command (joystick)
-        // swerveDrive.setDefaultCommand(
-        //     new TeleopDriveCommand(
-        //         swerveDrive,
-        //         ()-> -MathUtil.applyDeadband(driverJoystick.getY(), Constants.Controls.Y_DEADBAND),
-        //         ()-> -MathUtil.applyDeadband(driverJoystick.getX(), Constants.Controls.Y_DEADBAND),
-        //         ()-> -MathUtil.applyDeadband(driverJoystick.getTwist(), Constants.Controls.ANGLE_JOYSTICK_DEADBAND)
-        //     )
-        // );
-
+        swerveDrive.setDefaultCommand(
+            new TeleopDriveCommand(
+                swerveDrive,
+                ()-> -MathUtil.applyDeadband(driverJoystick.getY(), Constants.Controls.Y_DEADBAND),
+                ()-> -MathUtil.applyDeadband(driverJoystick.getX(), Constants.Controls.Y_DEADBAND),
+                ()-> -MathUtil.applyDeadband(driverJoystick.getTwist(), Constants.Controls.ANGLE_JOYSTICK_DEADBAND)
+            )
+        );
+        
         printDebugValues();
     }
     

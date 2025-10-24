@@ -37,7 +37,7 @@ public final class Constants {
     
         // used to adjust auto drive distance
         // multiply by wheel diameter to fudge from tuning steps
-        public static final double fudge = 1;
+        public static final double fudge = 0.935;
 
         // Wheel diameter in meters (4 inch wheel)
         public static final double WHEEL_DIAMETER_METERS = 0.1016 * fudge; // 4 inches

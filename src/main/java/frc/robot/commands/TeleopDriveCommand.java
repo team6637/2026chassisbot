@@ -46,6 +46,9 @@ public class TeleopDriveCommand extends Command {
         double yVelocity   = Math.pow(vY.getAsDouble(), 3);
         double angVelocity =  Math.pow(vZ.getAsDouble(), 3);
 
+        yVelocity = 0;
+        angVelocity = 0;
+
         swerve.drive(
             xVelocity * maxSwerveVelocity * speedModifier,
             yVelocity * maxSwerveVelocity * speedModifier,
