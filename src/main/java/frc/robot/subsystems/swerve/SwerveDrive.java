@@ -1,6 +1,7 @@
 package frc.robot.subsystems.swerve;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -21,10 +22,9 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import frc.robot.Constants;
 import frc.robot.subsystems.swerve.Gyro.GyroIO;
 import frc.robot.subsystems.swerve.Gyro.GyroIOInputsAutoLogged;
-import frc.robot.subsystems.swerve.Gyro.GyroIOSim;
+import frc.robot.subsystems.swerve.Gyro.GyroSim;
 import frc.robot.subsystems.swerve.Gyro.GyroPigeon;
 import frc.robot.subsystems.swerve.SwerveModule.SwerveModule;
-import frc.robot.subsystems.swerve.SwerveModule.SwerveModuleIOInputs;
 
 
 public class SwerveDrive extends SubsystemBase {
@@ -34,6 +34,7 @@ public class SwerveDrive extends SubsystemBase {
     private final GyroIO gyro;
     private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
 
+    private RobotConfig config;
 
     // Modules
     private final SwerveModule[] modules = {
@@ -41,13 +42,6 @@ public class SwerveDrive extends SubsystemBase {
         new SwerveModule("Swerve/FR", 1, Constants.SwerveModules.FRONT_RIGHT),
         new SwerveModule("Swerve/BL", 2, Constants.SwerveModules.BACK_LEFT),
         new SwerveModule("Swerve/BR", 3, Constants.SwerveModules.BACK_RIGHT)
-    };
-
-    private final SwerveModuleIOInputs[] moduleInputs = {
-        new SwerveModuleIOInputs(),
-        new SwerveModuleIOInputs(),
-        new SwerveModuleIOInputs(),
-        new SwerveModuleIOInputs()
     };
 
     // Kinematics and odometry
@@ -58,13 +52,16 @@ public class SwerveDrive extends SubsystemBase {
         Constants.SwerveModules.BACK_RIGHT.modulePosition
     );
 
+    private SwerveDrivePoseEstimator poseEstimator =
+      new SwerveDrivePoseEstimator(kinematics, gyroInputs.yaw, getModulePositions(), new Pose2d());
+
     private final SwerveDriveOdometry odometry; 
 
     public SwerveDrive() {
 
         // Gyro
         if(RobotBase.isSimulation()) {
-            gyro = new GyroIOSim();
+            gyro = new GyroSim();
         } else {
             gyro = new GyroPigeon();
         }
@@ -76,41 +73,39 @@ public class SwerveDrive extends SubsystemBase {
             getModulePositions()
         );
 
-         // Load the RobotConfig from the GUI settings. You should probably
-        // store this in your Constants file
-        RobotConfig config;
         try{
             config = RobotConfig.fromGUISettings();
-   
-            // Configure AutoBuilder last
-            AutoBuilder.configure(
-                    this::getPose, // Robot pose supplier
-                    this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
-                    this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-                    (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-                    new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                            new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-                    ),
-                    config, // The robot configuration
-                    () -> {
-                    // Boolean supplier that controls when the path will be mirrored for the red alliance
-                    // This will flip the path being followed to the red side of the field.
-                    // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-                    var alliance = DriverStation.getAlliance();
-                    if (alliance.isPresent()) {
-                        return alliance.get() == DriverStation.Alliance.Red;
-                    }
-                    return false;
-                    },
-                    this // Reference to this subsystem to set requirements
-            );
-
         } catch (Exception e) {
             // Handle exception as needed
             e.printStackTrace();
         }
+   
+        // Configure AutoBuilder last
+        AutoBuilder.configure(
+            this::getPose, // Robot pose supplier
+            this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+            ),
+            config, // The robot configuration
+            () -> {
+            // Boolean supplier that controls when the path will be mirrored for the red alliance
+            // This will flip the path being followed to the red side of the field.
+            // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+            }
+            return false;
+            },
+            this // Reference to this subsystem to set requirements
+        );
+
+        
     }
 
     public Rotation2d getHeading() {
@@ -194,19 +189,11 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public void log() {
-        // Update inputs for logging
-        for (int i = 0; i < modules.length; i++) {
-            modules[i].updateInputs();
-            Logger.processInputs("Swerve/Module" + i, moduleInputs[i]);
-        }
+        Logger.recordOutput("Swerve/MyStates", getModuleStates());
 
         gyro.updateInputs(gyroInputs, getChassisSpeeds().omegaRadiansPerSecond);
-
         Logger.processInputs("Swerve/Gyro", gyroInputs);
+
         Logger.recordOutput("Swerve/Pose", getPose());
-
-        // Log Swerve Module States for pod tuning
-        Logger.recordOutput("Swerve/MyStates", getModuleStates());
     }
-
 }

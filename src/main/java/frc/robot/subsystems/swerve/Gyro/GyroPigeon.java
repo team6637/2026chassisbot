@@ -17,7 +17,7 @@ public class GyroPigeon implements GyroIO {
     }
 
     @Override
-    public void updateInputs(GyroIOInputs inputs, double rotationRate) {
+    public void updateInputs(GyroIOInputs inputs) {
         inputs.yaw =  getYaw();
         inputs.yawDegrees = getYaw().getDegrees();
     }

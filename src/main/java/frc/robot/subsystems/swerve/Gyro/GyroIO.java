@@ -13,7 +13,8 @@ public interface GyroIO {
         public double yawDegrees = 0.0;
     }
 
-    // sim uses rotationRate to keep track of bot rotation
-    // rotationRate is unused by real gyro
-    public default void updateInputs(GyroIOInputs inputs,  double rotationRate) {}
+    public default void updateInputs(GyroIOInputs inputs) {}
+
+    // simRotationRate is for simulation only
+    public default void updateInputs(GyroIOInputs inputs,  double simRotationRate) {}
 }

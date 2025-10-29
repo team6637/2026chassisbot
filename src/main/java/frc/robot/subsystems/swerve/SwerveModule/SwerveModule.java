@@ -9,13 +9,17 @@ import org.littletonrobotics.junction.Logger;
 public class SwerveModule {
     private final String logPath;
     private final SwerveModuleIO io;
-    private final SwerveModuleIOInputs inputs = new SwerveModuleIOInputs();
+
+    private final SwerveModuleIOInputsAutoLogged inputs = new SwerveModuleIOInputsAutoLogged();
 
     public SwerveModule(String logPath, int moduleNumber, SwerveModuleConstants constants) {
         this.logPath = logPath;
-        io = RobotBase.isSimulation()
-            ? new SwerveModuleIOSim(constants)   // sim class
-            : new SwerveModuleIOReal(moduleNumber, constants); // hardware class
+
+        if(RobotBase.isSimulation()) {
+            io = new SwerveModuleIOSim(constants);
+        } else {
+            io = new SwerveModuleIOReal(moduleNumber, constants);
+        }
     }
 
     public void setDesiredState(SwerveModuleState desired) {
@@ -36,9 +40,12 @@ public class SwerveModule {
         );
     }
 
-    /** Call once per loop from SwerveDrive.periodic() */
-    public void updateInputs() {
+    public SwerveModuleIOInputsAutoLogged getInputs() {
+        return inputs;
+    }
+
+    public void periodic() {
         io.updateInputs(inputs);
-        Logger.processInputs(logPath, inputs);   // AdvantageKit log
+        Logger.processInputs(logPath, inputs);
     }
 }
