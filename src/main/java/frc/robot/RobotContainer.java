@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
@@ -54,6 +56,6 @@ public class RobotContainer {
 
 
     public Command getAutonomousCommand() {
-        return new InstantCommand();
+        return new PathPlannerAuto("Test Auto");
     }
 }
