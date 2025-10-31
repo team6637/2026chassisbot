@@ -4,16 +4,17 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.TeleopDriveCommand;
 import frc.robot.subsystems.swerve.SwerveDrive;
-import frc.robot.subsystems.swerve.VisionSubsystem;
 
 public class RobotContainer {
 
@@ -24,7 +25,11 @@ public class RobotContainer {
     // Driver Joystick
     private final Joystick driverJoystick = new Joystick(0);
 
+    private final SendableChooser<Command> autoChooser;
+
     public RobotContainer() {
+        autoChooser = AutoBuilder.buildAutoChooser();
+
         configureBindings();
 
         // Default driving command (joystick)
@@ -38,6 +43,7 @@ public class RobotContainer {
         );
         
         printDebugValues();
+        SmartDashboard.putData("Auto Chooser", autoChooser);
     }
     
     public static boolean isRedAlliance() {
@@ -56,6 +62,6 @@ public class RobotContainer {
 
 
     public Command getAutonomousCommand() {
-        return new PathPlannerAuto("Test Auto");
+        return autoChooser.getSelected();
     }
 }

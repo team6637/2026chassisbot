@@ -25,6 +25,7 @@ import frc.robot.subsystems.swerve.Gyro.GyroIOInputsAutoLogged;
 import frc.robot.subsystems.swerve.Gyro.GyroSim;
 import frc.robot.subsystems.swerve.Gyro.GyroPigeon;
 import frc.robot.subsystems.swerve.SwerveModule.SwerveModule;
+import frc.robot.subsystems.swerve.SwerveModule.SwerveModuleIOInputs;
 
 
 public class SwerveDrive extends SubsystemBase {
@@ -42,6 +43,13 @@ public class SwerveDrive extends SubsystemBase {
         new SwerveModule("Swerve/FR", 1, Constants.SwerveModules.FRONT_RIGHT),
         new SwerveModule("Swerve/BL", 2, Constants.SwerveModules.BACK_LEFT),
         new SwerveModule("Swerve/BR", 3, Constants.SwerveModules.BACK_RIGHT)
+    };
+
+    private final SwerveModuleIOInputs[] moduleInputs = {
+        new SwerveModuleIOInputs(),
+        new SwerveModuleIOInputs(),
+        new SwerveModuleIOInputs(),
+        new SwerveModuleIOInputs()
     };
 
     // Kinematics and odometry
@@ -87,7 +95,7 @@ public class SwerveDrive extends SubsystemBase {
             this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(0.1, 0.0, 0.0), // Translation PID constants
                     new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
             ),
             config, // The robot configuration
@@ -125,18 +133,18 @@ public class SwerveDrive extends SubsystemBase {
         return kinematics.toChassisSpeeds(this.getModuleStates());
     }
 
-    /** Returns current state of all modules */
     public SwerveModuleState[] getModuleStates() {
         SwerveModuleState[] states = new SwerveModuleState[4];
+
         for (int i = 0; i < modules.length; i++) {
             states[i] = modules[i].getState();
         }
         return states;
     }
 
-    /** Returns current positions of all modules */
     public SwerveModulePosition[] getModulePositions() {
         SwerveModulePosition[] positions = new SwerveModulePosition[4];
+
         for (int i = 0; i < modules.length; i++) {
             positions[i] = modules[i].getPosition();
         }
@@ -184,12 +192,17 @@ public class SwerveDrive extends SubsystemBase {
         odometry.update(getHeading(), getModulePositions());
 
         SmartDashboard.putNumber("odometry X", odometry.getPoseMeters().getX()); 
-        SmartDashboard.putNumber("odometry Y", odometry.getPoseMeters().getY()); 
-
+        SmartDashboard.putNumber("odometry Y", odometry.getPoseMeters().getY());
     }
 
     public void log() {
+         // Update inputs for logging
+         for (int i = 0; i < modules.length; i++) {
+            modules[i].updateInputs();
+            Logger.processInputs("Swerve/Module" + i, moduleInputs[i]);
+        }
         Logger.recordOutput("Swerve/MyStates", getModuleStates());
+        
 
         gyro.updateInputs(gyroInputs, getChassisSpeeds().omegaRadiansPerSecond);
         Logger.processInputs("Swerve/Gyro", gyroInputs);

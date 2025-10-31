@@ -9,8 +9,7 @@ import org.littletonrobotics.junction.Logger;
 public class SwerveModule {
     private final String logPath;
     private final SwerveModuleIO io;
-
-    private final SwerveModuleIOInputsAutoLogged inputs = new SwerveModuleIOInputsAutoLogged();
+    private final SwerveModuleIOInputs inputs = new SwerveModuleIOInputs();
 
     public SwerveModule(String logPath, int moduleNumber, SwerveModuleConstants constants) {
         this.logPath = logPath;
@@ -40,12 +39,11 @@ public class SwerveModule {
         );
     }
 
-    public SwerveModuleIOInputsAutoLogged getInputs() {
-        return inputs;
+    public void updateInputs() {
+        io.updateInputs(inputs);
     }
 
     public void periodic() {
-        io.updateInputs(inputs);
         Logger.processInputs(logPath, inputs);
     }
 }
