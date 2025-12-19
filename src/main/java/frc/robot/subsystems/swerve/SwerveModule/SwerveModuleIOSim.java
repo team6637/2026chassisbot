@@ -16,6 +16,10 @@ public class SwerveModuleIOSim implements SwerveModuleIO {
         this.constants = constants;
     }
 
+    public Rotation2d getAbsoluteAngle() {
+        return new Rotation2d();
+    }
+
     @Override
     public void updateInputs(SwerveModuleIOInputs inputs) {
         // Update drive position

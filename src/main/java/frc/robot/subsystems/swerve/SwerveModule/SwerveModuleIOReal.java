@@ -1,30 +1,26 @@
 package frc.robot.subsystems.swerve.SwerveModule;
 
-import com.ctre.phoenix6.hardware.CANcoder;
-
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.SparkBaseConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.EncoderConfig;
-import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import frc.robot.Constants;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants.SwerveConfig;
-import frc.robot.util.OptimizeModuleState;
+import frc.robot.util.SwerveModuleAngleOptimizer;
 
 /**
  * Represents a single swerve drive module (wheel pod) on the robot.
@@ -86,7 +82,7 @@ public class SwerveModuleIOReal implements SwerveModuleIO {
     public void configureDriveMotor() {
         driveMotor.configure(
             new SparkMaxConfig()
-                .idleMode(IdleMode.kCoast)
+                .idleMode(IdleMode.kBrake)
                 .inverted(constants.driveInverted)
                 .smartCurrentLimit(SwerveConfig.DRIVE_CURRENT_LIMIT)
                 .openLoopRampRate(SwerveConfig.DRIVE_RAMP)
@@ -175,11 +171,11 @@ public class SwerveModuleIOReal implements SwerveModuleIO {
     // Tell the pod what direction and speed you want it to go
     @Override
     public void setDesiredState(SwerveModuleState desired) {
-        desired.optimize(getRelativeAngle());
+        SwerveModuleState optimizedState = SwerveModuleAngleOptimizer.optimize(desired, getRelativeAngle());
 
         //Velocity in RPM  (convert from m/s if needed)
         //Position in rotations
-        double targetDriveRPM = desired.speedMetersPerSecond / SwerveConfig.DRIVE_VELOCITY_CONVERSION;
+        double targetDriveRPM = optimizedState.speedMetersPerSecond / SwerveConfig.DRIVE_VELOCITY_CONVERSION;
         drivePID.setReference(
             targetDriveRPM, SparkBase.ControlType.kVelocity);
 
@@ -188,9 +184,9 @@ public class SwerveModuleIOReal implements SwerveModuleIO {
         //     currentReferenceAngle :
         //     desired.angle; 
 
-        anglePID.setReference(desired.angle.getRotations(), ControlType.kPosition);
+        anglePID.setReference(optimizedState.angle.getRotations(), ControlType.kPosition);
 
-        currentReferenceAngle = desired.angle;
+        currentReferenceAngle = optimizedState.angle;
     }
 
     @Override

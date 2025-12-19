@@ -95,8 +95,8 @@ public class SwerveDrive extends SubsystemBase {
             this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(0.1, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+                    new PIDConstants(5, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(5, 0.0, 0.0) // Rotation PID constants
             ),
             config, // The robot configuration
             () -> {
@@ -193,6 +193,7 @@ public class SwerveDrive extends SubsystemBase {
 
         SmartDashboard.putNumber("odometry X", odometry.getPoseMeters().getX()); 
         SmartDashboard.putNumber("odometry Y", odometry.getPoseMeters().getY());
+
     }
 
     public void log() {
@@ -200,6 +201,15 @@ public class SwerveDrive extends SubsystemBase {
          for (int i = 0; i < modules.length; i++) {
             modules[i].updateInputs();
             Logger.processInputs("Swerve/Module" + i, moduleInputs[i]);
+
+            double rawAbsoluteEncoderValue = modules[i].getAbsoluteAngle().getDegrees();
+            if(rawAbsoluteEncoderValue < 0) {
+                SmartDashboard.putNumber("swerve raw absolute encoder value " + i, 360 + modules[i].getAbsoluteAngle().getDegrees());
+            } else {
+                SmartDashboard.putNumber("swerve raw absolute encoder value " + i, modules[i].getAbsoluteAngle().getDegrees());
+            }
+
+            
         }
         Logger.recordOutput("Swerve/MyStates", getModuleStates());
         

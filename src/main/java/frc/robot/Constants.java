@@ -15,8 +15,8 @@ public final class Constants {
         public static final int GYRO_ID = 9;
         public static final String GYRO_CAN_BUS_NAME = "rio";
 
-        public static final double MAXIMUM_CHASSIS_VELOCITY = 4.0; // m/s
-        public static final double MAXIMUM_CHASSIS_ANGULAR_VELOCITY = 0.6; // rotations/s
+        public static final double MAXIMUM_CHASSIS_VELOCITY = 3.75; // m/s
+        public static final double MAXIMUM_CHASSIS_ANGULAR_VELOCITY = 3.75; // radians/s
     }
 
     public static final class Controls {
@@ -63,7 +63,7 @@ public final class Constants {
         public static final double ANGLE_RAMP = 0.25;
     
         // PID (from JSON)
-        public static final double DRIVE_kP = 0.0020645;
+        public static final double DRIVE_kP = 0.000215;
         public static final double DRIVE_kI = 0.0;
         public static final double DRIVE_kD = 0.0;
         public static final double DRIVE_kF = 0.0;

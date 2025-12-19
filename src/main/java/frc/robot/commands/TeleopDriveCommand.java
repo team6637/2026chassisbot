@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.swerve.SwerveDrive;
@@ -20,7 +19,7 @@ public class TeleopDriveCommand extends Command {
     private final double maxSwerveVelocity = Constants.Drivetrain.MAXIMUM_CHASSIS_VELOCITY;
     private final double maxSwerveAngularVelocity = Constants.Drivetrain.MAXIMUM_CHASSIS_ANGULAR_VELOCITY;
 
-    private double speedModifier = 0.1;
+    private double speedModifier = 1.0;
     private double rotationModifier = 1.0;
 
     public TeleopDriveCommand(

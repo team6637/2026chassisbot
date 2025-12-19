@@ -43,6 +43,10 @@ public class SwerveModule {
         io.updateInputs(inputs);
     }
 
+    public Rotation2d getAbsoluteAngle() {
+        return io.getAbsoluteAngle();
+    }
+
     public void periodic() {
         Logger.processInputs(logPath, inputs);
     }
