@@ -23,6 +23,10 @@ import frc.robot.Constants;
 import frc.robot.subsystems.swerve.Gyro.GyroIO;
 import frc.robot.subsystems.swerve.Gyro.GyroIOInputsAutoLogged;
 import frc.robot.subsystems.swerve.Gyro.GyroSim;
+import frc.robot.subsystems.swerve.Odometry.OdometryIO;
+import frc.robot.subsystems.swerve.Odometry.OdometryIOInputs;
+import frc.robot.subsystems.swerve.Odometry.OdometryReal;
+import frc.robot.subsystems.swerve.Odometry.OdometrySim;
 import frc.robot.subsystems.swerve.Gyro.GyroPigeon;
 import frc.robot.subsystems.swerve.SwerveModule.SwerveModule;
 import frc.robot.subsystems.swerve.SwerveModule.SwerveModuleIOInputs;
@@ -34,6 +38,9 @@ public class SwerveDrive extends SubsystemBase {
 
     private final GyroIO gyro;
     private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
+
+    private final OdometryIO odometry;
+    private final OdometryIOInputs odometryInputs = new OdometryIOInputs();
 
     private RobotConfig config;
 
@@ -63,23 +70,17 @@ public class SwerveDrive extends SubsystemBase {
     private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, gyroInputs.yaw, getModulePositions(), new Pose2d());
 
-    private final SwerveDriveOdometry odometry; 
-
     public SwerveDrive() {
 
         // Gyro
         if(RobotBase.isSimulation()) {
             gyro = new GyroSim();
+            odometry = new OdometrySim(kinematics, getHeading(), getModulePositions());
         } else {
             gyro = new GyroPigeon();
+            odometry = new OdometryReal(kinematics, getHeading(), getModulePositions());
         }
         gyro.zeroYaw();
-
-        odometry = new SwerveDriveOdometry(
-            kinematics,
-            getHeading(),
-            getModulePositions()
-        );
 
         try{
             config = RobotConfig.fromGUISettings();
@@ -126,7 +127,7 @@ public class SwerveDrive extends SubsystemBase {
 
     /** Resets odometry to a known pose */
     public void resetPose(Pose2d pose) {
-        odometry.resetPosition(getHeading(), getModulePositions(), pose);
+        odometry.resetPose(getHeading(), getModulePositions(), pose);
     }
 
     public ChassisSpeeds getChassisSpeeds() {
@@ -187,13 +188,6 @@ public class SwerveDrive extends SubsystemBase {
         }
         log();
         desiredChassisSpeeds = null;
-
-        // Update odometry
-        odometry.update(getHeading(), getModulePositions());
-
-        SmartDashboard.putNumber("odometry X", odometry.getPoseMeters().getX()); 
-        SmartDashboard.putNumber("odometry Y", odometry.getPoseMeters().getY());
-
     }
 
     public void log() {
@@ -212,11 +206,17 @@ public class SwerveDrive extends SubsystemBase {
             
         }
         Logger.recordOutput("Swerve/MyStates", getModuleStates());
-        
 
         gyro.updateInputs(gyroInputs, getChassisSpeeds().omegaRadiansPerSecond);
         Logger.processInputs("Swerve/Gyro", gyroInputs);
 
         Logger.recordOutput("Swerve/Pose", getPose());
+
+        // Update odometry
+        odometry.updateInputs(odometryInputs, getHeading(), getModulePositions());
+        Logger.processInputs("Swerve/Odometry", odometryInputs);
+
+        SmartDashboard.putNumber("odometry X", odometry.getPoseMeters().getX()); 
+        SmartDashboard.putNumber("odometry Y", odometry.getPoseMeters().getY());
     }
 }
