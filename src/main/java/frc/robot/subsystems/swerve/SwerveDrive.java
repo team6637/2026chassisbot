@@ -190,6 +190,9 @@ public class SwerveDrive extends SubsystemBase {
         }
         log();
         desiredChassisSpeeds = null;
+
+        // TODO: Determine if we have to add odometry to the pose estimator in the drive loop
+        // afaik the pose estimator is only adding vision measurements.
     }
 
     public void log() {
