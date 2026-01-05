@@ -61,7 +61,6 @@ public class SwerveDrive extends SubsystemBase {
         new SwerveModuleIOInputs()
     };
 
-    // Kinematics and odometry
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
         Constants.SwerveModules.FRONT_LEFT.modulePosition,
         Constants.SwerveModules.FRONT_RIGHT.modulePosition,
@@ -69,8 +68,10 @@ public class SwerveDrive extends SubsystemBase {
         Constants.SwerveModules.BACK_RIGHT.modulePosition
     );
 
+    private Pose2d startingPose = new Pose2d();
+
     private SwerveDrivePoseEstimator poseEstimator =
-      new SwerveDrivePoseEstimator(kinematics, gyroInputs.yaw, getModulePositions(), new Pose2d());
+      new SwerveDrivePoseEstimator(kinematics, gyroInputs.yaw, getModulePositions(), startingPose);
 
     public SwerveDrive() {
 
@@ -127,8 +128,12 @@ public class SwerveDrive extends SubsystemBase {
         return poseEstimator.getEstimatedPosition();
     }
 
-    /** Resets odometry to a known pose */
     public void resetPose(Pose2d pose) {
+        poseEstimator.resetPosition(getHeading(), getModulePositions(), pose);
+    }
+
+    /** Resets odometry to a known pose */
+    public void resetOdometry(Pose2d pose) {
         odometry.resetPose(getHeading(), getModulePositions(), pose);
     }
 
@@ -191,8 +196,7 @@ public class SwerveDrive extends SubsystemBase {
         log();
         desiredChassisSpeeds = null;
 
-        // TODO: Determine if we have to add odometry to the pose estimator in the drive loop
-        // afaik the pose estimator is only adding vision measurements.
+        poseEstimator.update(getHeading(), getModulePositions());
     }
 
     public void log() {
