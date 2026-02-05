@@ -7,15 +7,32 @@
 
 package frc.robot.subsystems.vision;
 
+import java.io.IOException;
+import java.nio.file.Path;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
+
 
 public class VisionConstants {
-    // AprilTag layout
-    public static AprilTagFieldLayout aprilTagLayout =
-        AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+
+    //public static AprilTagFieldLayout aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+    static Path jsonPath = Filesystem.getDeployDirectory().toPath().resolve("Betawolves2026LabField.json");
+    public static AprilTagFieldLayout aprilTagLayout = setFieldLayout();
+    private static AprilTagFieldLayout setFieldLayout() {
+        AprilTagFieldLayout layout;
+        try {
+            layout = new AprilTagFieldLayout(jsonPath);
+        } catch (IOException ex) {
+            layout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+            DriverStation.reportError("Unable to open filee: " + jsonPath, ex.getStackTrace());
+        }
+        return layout;
+    }
 
     // TODO: Adjust names to match the names in Photonvisiom
     // Camera names, must match names configured on coprocessor

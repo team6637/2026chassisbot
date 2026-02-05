@@ -36,8 +36,8 @@ public class RobotContainer {
             vision =
             new Vision(
                 swerveDrive::addVisionMeasurement,
-                new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                new VisionIOPhotonVision(camera1Name, robotToCamera1)
+                new VisionIOPhotonVision(camera0Name, robotToCamera0)
+                //new VisionIOPhotonVision(camera1Name, robotToCamera1)
             );
         } else {
             vision =
