@@ -1196,7 +1196,7 @@ That's it. The new subsystem will automatically:
 
 > **This is the section for the question: "I'm holding this motor/sensor. How do I write code for it?"**
 >
-> For every physical component on our robot, this section shows you the exact Java class, the import, how to construct it, how to configure it, and working code examples based on what we actually use. See also the full parts inventory in [our design guide](../../../betawolves-hq/FRC-2026/knowledge/000-robot-subsystems-design-guide.md).
+> For every physical component on our robot, this section shows you the exact Java class, the import, how to construct it, how to configure it, and working code examples based on what we actually use. See also the full parts inventory in [our design guide](https://github.com/The-BetaWolves/betawolves-hq/blob/main/FRC-2026/knowledge/000-robot-subsystems-design-guide.md).
 
 ### The Big Picture: Physical Part to Java Object
 
@@ -1255,7 +1255,7 @@ SparkMax motor = new SparkMax(12, MotorType.kBrushless);
 - 21-23: Front-right module
 - 31-33: Back-left module
 - 37-39: Back-right module
-- Other subsystem IDs are TBD (see the [design guide](../../../betawolves-hq/FRC-2026/knowledge/000-robot-subsystems-design-guide.md#can-bus-device-ids))
+- Other subsystem IDs are TBD (see the [design guide](https://github.com/The-BetaWolves/betawolves-hq/blob/main/FRC-2026/knowledge/000-robot-subsystems-design-guide.md#can-bus-device-ids))
 
 #### Configuring It (REVLib 2025+ Config API)
 
@@ -1513,7 +1513,7 @@ NEO Vortex motor  --> SparkFlex controller --> SparkFlex Java class
 
 #### Quick Reference: Which Subsystem Uses Which
 
-Based on [our design guide](../../../betawolves-hq/FRC-2026/knowledge/000-robot-subsystems-design-guide.md#motor--sensor-inventory):
+Based on [our design guide](https://github.com/The-BetaWolves/betawolves-hq/blob/main/FRC-2026/knowledge/000-robot-subsystems-design-guide.md#motor--sensor-inventory):
 
 | Subsystem | Component | Motor | Controller | Java Class |
 |---|---|---|---|---|
@@ -1716,7 +1716,7 @@ boolean connected = turretEncoder.isConnected();
 
 #### Example: Turret Position Sensing
 
-Based on [our design guide](../../../betawolves-hq/FRC-2026/knowledge/000-robot-subsystems-design-guide.md#turret-subsystem), the turret has a NEO motor for rotation and a Through-Bore Encoder for absolute position:
+Based on [our design guide](https://github.com/The-BetaWolves/betawolves-hq/blob/main/FRC-2026/knowledge/000-robot-subsystems-design-guide.md#turret-subsystem), the turret has a NEO motor for rotation and a Through-Bore Encoder for absolute position:
 
 ```java
 // In TurretIOReal.java:
@@ -1759,7 +1759,7 @@ public double getPosition() {
 }
 ```
 
-**Note about the turret zero position:** Per our design guide, the turret is zeroed to the **back** of the robot, so code needs to subtract PI when converting to robot-relative angles. See the [turret aim math](../../../betawolves-hq/FRC-2026/knowledge/000-robot-subsystems-design-guide.md#how-to-aim-the-math) in the design guide.
+**Note about the turret zero position:** Per our design guide, the turret is zeroed to the **back** of the robot, so code needs to subtract PI when converting to robot-relative angles. See the [turret aim math](https://github.com/The-BetaWolves/betawolves-hq/blob/main/FRC-2026/knowledge/000-robot-subsystems-design-guide.md#how-to-aim-the-math) in the design guide.
 
 ---
 
@@ -1920,7 +1920,7 @@ Examples:
 
 ## 16. Our Robot's Full Hardware Map
 
-> This section maps every physical part on our 2026 robot to the exact code you'd write for it. For the full parts inventory and planned subsystem designs, see [000-robot-subsystems-design-guide.md](../../../betawolves-hq/FRC-2026/knowledge/000-robot-subsystems-design-guide.md).
+> This section maps every physical part on our 2026 robot to the exact code you'd write for it. For the full parts inventory and planned subsystem designs, see [000-robot-subsystems-design-guide.md](https://github.com/The-BetaWolves/betawolves-hq/blob/main/FRC-2026/knowledge/000-robot-subsystems-design-guide.md).
 
 ### 16.1 Complete Motor and Sensor Inventory
 
@@ -1962,7 +1962,7 @@ CTRE Pigeon2                --> Pigeon2 gyro                    GyroPigeon.java
 
 **Hardware:** 1x NEO (rotator) + 1x NEO (rollers) + 1x external encoder
 
-Per the [design guide](../../../betawolves-hq/FRC-2026/knowledge/000-robot-subsystems-design-guide.md#intake-subsystem), the intake has a rotator arm that deploys/retracts and rollers that spin to grab game pieces.
+Per the [design guide](https://github.com/The-BetaWolves/betawolves-hq/blob/main/FRC-2026/knowledge/000-robot-subsystems-design-guide.md#intake-subsystem), the intake has a rotator arm that deploys/retracts and rollers that spin to grab game pieces.
 
 ```java
 // IntakeIOReal.java - What the code needs to create:
@@ -1989,7 +1989,7 @@ SparkMax rollerMotor = new SparkMax(ROLLER_CAN_ID, MotorType.kBrushless);
 
 **Hardware:** 1x NEO (indexer) + 1x NEO Vortex (kicker)
 
-Per the [design guide](../../../betawolves-hq/FRC-2026/knowledge/000-robot-subsystems-design-guide.md#indexer--kicker-subsystem), the indexer feeds game pieces from the intake toward the shooter, and the kicker launches them into the flywheel.
+Per the [design guide](https://github.com/The-BetaWolves/betawolves-hq/blob/main/FRC-2026/knowledge/000-robot-subsystems-design-guide.md#indexer--kicker-subsystem), the indexer feeds game pieces from the intake toward the shooter, and the kicker launches them into the flywheel.
 
 ```java
 // IndexerIOReal.java - What the code needs to create:
@@ -2024,7 +2024,7 @@ boolean hasGamePiece = !gamePieceSensor.get();  // Often inverted (broken = LOW)
 
 **Hardware:** 1x NEO (turret) + 2x NEO Vortex (flywheels) + 1x NEO (flywheel) + 1x NEO (hood) + 1x Through-Bore Encoder
 
-This is the most complex subsystem. Per the [design guide](../../../betawolves-hq/FRC-2026/knowledge/000-robot-subsystems-design-guide.md#shooter-subsystem), it may be split into separate subsystems or combined.
+This is the most complex subsystem. Per the [design guide](https://github.com/The-BetaWolves/betawolves-hq/blob/main/FRC-2026/knowledge/000-robot-subsystems-design-guide.md#shooter-subsystem), it may be split into separate subsystems or combined.
 
 #### Turret (Position Control with Absolute Encoder)
 
@@ -2131,7 +2131,7 @@ public void setHoodAngle(double radians) {
 
 **Hardware:** 1x NEO Vortex + SparkFlex
 
-Per the [design guide](../../../betawolves-hq/FRC-2026/knowledge/000-robot-subsystems-design-guide.md#climber-subsystem), the climber extends/retracts to latch onto climbing bars.
+Per the [design guide](https://github.com/The-BetaWolves/betawolves-hq/blob/main/FRC-2026/knowledge/000-robot-subsystems-design-guide.md#climber-subsystem), the climber extends/retracts to latch onto climbing bars.
 
 ```java
 // ClimberIOReal.java
@@ -2437,5 +2437,5 @@ This is exactly how our swerve `fudge` factor (0.935) was determined.
 ---
 
 *Last updated: February 2026 | Team 6637 Betawolves*
-*Full parts list and subsystem designs: [betawolves-hq/FRC-2026/knowledge/000-robot-subsystems-design-guide.md](../../../betawolves-hq/FRC-2026/knowledge/000-robot-subsystems-design-guide.md)*
-*Software architecture overview: [betawolves-hq/FRC-2026/knowledge/000-robot-software-architecture.md](../../../betawolves-hq/FRC-2026/knowledge/000-robot-software-architecture.md)*
+*Full parts list and subsystem designs: [betawolves-hq/FRC-2026/knowledge/000-robot-subsystems-design-guide.md](https://github.com/The-BetaWolves/betawolves-hq/blob/main/FRC-2026/knowledge/000-robot-subsystems-design-guide.md)*
+*Software architecture overview: [betawolves-hq/FRC-2026/knowledge/000-robot-software-architecture.md](https://github.com/The-BetaWolves/betawolves-hq/blob/main/FRC-2026/knowledge/000-robot-software-architecture.md)*
